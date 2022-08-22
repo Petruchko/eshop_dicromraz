@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<body>
+
+  <!--Main layout-->
+  <main>
+    <div class="container">
+{% if objects.items.all %}
+      <h1>Заказ</h1>
+<div class="table-responsive">
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Наименование</th>
+      <th scope="col">Цена</th>
+      <th scope="col">Количество</th>
+      <th scope="col">Итоговая цена</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for order_item in objects.items.all %}
+  {% if order_item.quantity > 0 %}
+    <tr>
+      <th scope="col">{{ forloop.counter }}</th>
+      <th scope="row">{{ order_item.item.title }}</th>
+      <td>₽{{ order_item.item.price }}</td>
+      <td>{{ order_item.quantity }} <a href="{% url 'core:add-quantity' order_item.item.slug %}">
+          <i class="fas fa-plus"></i>
+      </a>
+        {% if order_item.quantity > 1 %}
+      <a href="{% url 'core:minus-quantity' order_item.item.slug %}">
+        <i class="fas fa-minus"></i>
+        {% endif %}
+        <a href="{% url 'core:delete-from-order' order_item.item.slug %}">
+        <button type="button" class="btn btn-secondary btn-sm">Убрать из корзины</button>
+
+
+      </td>
+      {% if order_item.item.discount_price %}
+      <td>${{ order_item.get_total_discount_item_price }} &nbsp <span class="badge badge-primary">экономия ₽{{ order_item.get_amount_saved }}</span> </td>
+      {% else %}
+      <td>₽{{ order_item.get_total_item_price }}</td>
+      {% endif %}
+    </tr>
+  {% endif %}
+  {% endfor %}
+  <tr>
+    <td colspan="4"><b>Сумма заказа</b></td>
+    <td>₽{{ objects.get_total }}</td>
+  </tr>
+  <tr>
+  </tr>
+  </tbody>
+</table>
+      <td colspan="4"><a href="/checkout/"</a><button type="button" class="btn btn-warning float-right">Перейти к оплате</button></td>
+  <td colspan="4"><a href="/"</a><button type="button" class="btn btn-primary float-right">Продолжить покупки</button></td>
+  {% else %}
+  <h1>Корзина пуста</h1>
+  {% endif %}
+  <a href="/">Перейти на основную страницу</a>
+
+  </main>
+  <!--Main layout-->
+</body>
+
+{% endblock content %}
